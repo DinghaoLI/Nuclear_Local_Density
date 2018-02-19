@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Projet IPS</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="core/fonts/mono.css"> 
+    <link rel="stylesheet" type="text/css" href="core/css/animate.css"> 
+    <link rel="stylesheet" type="text/css" href="core/css/cinescript.css"> 
+    <link rel="stylesheet" type="text/css" href="core/css/style_core.css"> 
+    <link rel="stylesheet" type="text/css" href="core/css/mermaid.css"> 
+    <link rel="stylesheet" type="text/css" href="core/css/gitgraph.css"> 
+    <link rel="stylesheet" type="text/css" href="core/css/style_ensiie.css"> 
+  </head>
+  <body>
+    <textarea id="source" readonly>
+class: titlepage
+
+<center>
+.title[
+Présentation du projet IPS-PROD - ENSIIE - 2018]
+
+
+.subtitle[
+Dinghao LI
+
+Tingting WANG
+]
+</center>
+
+.footnote[
+[:book:](../toc/index.html)
+]
+
+???
+
+Some slide notes.
+
+Want some `\(\LaTeX\)` ?
+
+`$$a_{0}=\frac{1}{4}b_{1}$$`
+
+Some items:
+* first
+* second
+* third
+
+---
+
+#Structure du projet
+
+.column.middle.hcenter.grow[
+.tree[
+project
+* **src**
+    * *.h
+    * *.cpp
+    * ...
+    * Makefile
+* **doc**
+    * html
+    * latex
+    * Makefile
+* **pres**
+    * ...
+* Makefile
+* Doxyfile
+* astyle.conf
+]]
+
+
+---
+
+
+# Structure du projet
+
+.column.middle.grow[
+.row.middle.grow[
+.column.w100.middle[
+![](images/class.jpg)
+]]
+]
+
+---
+#Différents modèles nucléaires
+
+.center.w100.grow.column[
+![](images/modele.gif)
+]
+
+## La fonction d'onde `\(\psi\)`  
+Elle n’a pas de signification physique, par contre le module au
+carré de la fonction représente la densité de probabilité de trouver le système dans
+un volume dv de l’espace lorsqu’il se trouve dans l’état décrit par `\(\psi\)`.
+
+
+
+---
+
+#Sujet
+
+## Calcul et tracé de la densité d'un système nucléaire
+Densité nucléaire locale
+.block[`$$\rho(\mathbf{r})\equiv \sum_a \sum_b \rho_{ab}\psi_a(\mathbf{r})\psi^*_b(\mathbf{r})$$`
+]
+
+avec `\(\rho_{ab}\)` une matrice donnée
+
+et `\(\psi_a(\mathbf{r})\)` la fonction d'onde solution de l'équation de Schrödinger 3D
+`$$
+\psi_{a\equiv m,n,nz}(r, \theta, z)
+        \equiv
+    Z_a(z)
+    .
+    R_a(r)
+    .
+         e^{im\theta}
+$$`
+
+`$$\psi_a(\mathbf{r})\psi^*_b(\mathbf{r})\equiv \sum_a \sum_b \rho_{ab} R_a(r) Z_a(z) R_b(r) Z_b(z) \exp(im\theta - im\theta)$$`
+`$$\psi_a(\mathbf{r})\psi^*_b(\mathbf{r})\equiv \sum_a \sum_b \rho_{ab} R_a(r) Z_a(z) R_b(r) Z_b(z)$$`
+
+##Equation de Schrödinger:
+$$\hat{H}_{(z)}\psi_n(z) = E_n\psi_n(z)$$
+---
+#Sujet
+
+.column.middle.grow[
+## Fonctions de base
+
+Elles sont définies par
+`$$
+\psi_{m,n,n_z}(r_\perp, \theta, z)
+        \equiv
+    Z(z, n_z)
+    .
+    R(r_\perp, m, n)
+    .
+         e^{im\theta}
+$$`
+
+avec `\(Z\)` la partie dépendant de `\(z\)`
+
+`$$
+Z(z, n_z)
+\equiv
+\phi_{n_z}(z)
+=
+         \frac{1}{\sqrt{b_z}}
+         \frac{1}{\sqrt{2^{n_z} \sqrt{\pi}n_z!}}
+         e^{-\frac{z^2}{2b_z^2}}H_{n_z}\left(\frac{z}{b_z}\right)
+$$`
+
+et `\(R\)` **la partie radiale**
+`$$
+R(r_\perp, m, n)
+         \equiv
+         \frac{1}{b_{\perp}\sqrt{\pi}}
+         \sqrt{\frac{n!}{(n+|m|)!}}
+         e^{-\frac{r_{\perp}^2}{2b_{\perp}^2}}
+         \left(\frac{r_{\perp}}{b_{\perp}}\right)^{|m|}
+         L_n^{|m|}\left(\frac{r_{\perp}^2}{b_{\perp}^2}\right).
+$$`
+
+constantes: `\(b_\perp, b_z = \sqrt{\frac{\hbar}{m\omega}}\)`.
+]
+
+---
+#Sujet
+
+.column.middle.grow[
+## Troncature de la base
+
+On a
+`$$
+n_z^\textrm{max}(i) \equiv (N+2).Q^\frac{2}{3}+\frac{1}{2}-i.Q
+$$`
+
+et
+`$$
+m^\textrm{max} \equiv \textrm{sup}\left\{i:n_z^\textrm{max}(i)\ge 1\right\}.
+$$`
+
+Les valeurs des nombres quantique sont des **entiers** vérifiant
+`$$\begin{eqnarray}
+0 &\le m \le& m^\textrm{max}-1\\
+0 &\le n \le& \frac{1}{2}(m^\textrm{max}-m-1)\\
+0 &\le n_z \le& n_z^\textrm{max}(m+2n+1)-1.
+\end{eqnarray}$$`
+
+paramètres: `\(N, Q\)`.
+]
+
+---
+#Calcul du polynôme d'Hermite et de Laguerre
+
+.column.middle.grow[
+## Polynôme d'Hermite
+
+`$$
+\begin{eqnarray*}
+H_0(\zeta)&=&1\\
+H_1(\zeta)&=&2\zeta\\
+H_{n}(\zeta)&=&2\zeta H_{n-1}(\zeta)-2(n-1)H_{n-2}(\zeta)
+\end{eqnarray*}
+$$`
+
+## Polynôme de Laguerre généralisé
+
+`$$
+\begin{eqnarray*}
+L^{m}_0(\eta)&=&1\\
+L^{m}_1(\eta)&=&1+m-\eta\\
+L^{m}_{n}(\eta)&=&\left(2+\frac{m-1-\eta}{n}\right)L^{m}_{n-1}(\eta)-\left(1+\frac{m-1}{n}\right)L^{m}_{n-2}(\eta)
+\end{eqnarray*}
+$$`
+]
+
+
+---
+#Optimisation de l'algorithme
+
+
+## Utilisation de `\(\delta_{m,mp}\)`
+
+.row[
+.column.w48.middle[
+```C++
+//=== Version 0 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            funcA = basisFunc(m,n,n_z,zVals,rVals);
+            funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+            result += funcA % funcB * rho(ia,ib);
+            ib++;
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+.column.middle[
+:arrow_right:
+]
+.column.w48.middle[
+```C++
+//=== Version 1 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      for (int mp = 0; mp < mMax; mp++)
+      {
+*        if (m != mp){
+          ... //calcul de ib
+*          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            funcA = basisFunc(m,n,n_z,zVals,rVals);
+            funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+            result += funcA % funcB * rho(ia,ib);
+            ib++;
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+]
+
+---
+#Optimisation de l'algorithme
+
+
+## précalcul de funcA
+
+.row[
+.column.w48.middle[
+```C++
+//=== Version 1 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ... //calcul de ib
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            funcA = basisFunc(m,n,n_z,zVals,rVals);
+            funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+            result += funcA % funcB * rho(ia,ib);
+            ib++;
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+.column.middle[
+:arrow_right:
+]
+.column.w48.middle[
+```C++
+//=== Version 2 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+*      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ... //calcul de ib
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            ib++;
+            funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+            result += funcA % funcB * rho(ia,ib);
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+]
+
+---
+#Optimisation de l'algorithme
+
+
+## précalcul de ib pour m = mp
+
+.row[
+.column.w48.middle[
+```C++
+//=== Version 2 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ... //calcul de ib
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            ib++;
+            funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+            result += funcA % funcB * rho(ia,ib);
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+.column.middle[
+:arrow_right:
+]
+.column.w48.middle[
+```C++
+//=== Version 3 ===
+*sumN_zMax = arma::sum(basis.n_zMax, 1);
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+*          ib += sumN_zMax(mp);
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            if(n_z > n_zp){
+              ib++;
+              funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+              result += funcA % funcB * rho(ia,ib);
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+]
+
+---
+#Optimisation de l'algorithme
+
+
+## Utilisation de la symétrie `\(\psi_{ab}\) = \(\psi_{ba}\)` 
+
+.row[
+.column.w48.middle[
+```C++
+//=== Version 3 ===
+sumN_zMax = arma::sum(basis.n_zMax, 1);
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ib += sumN_zMax(mp);
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            if(n_z > n_zp){
+              ib++;
+              funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+              result += funcA % funcB * rho(ia,ib);
+            
+          }
+        }
+      }
+    ib = 0;
+    ia++;
+    }
+  }
+}
+```
+]
+.column.middle[
+:arrow_right:
+]
+.column.w48.middle[
+```C++
+//=== Version 4 ===
+*sumN_zMax = arma::sum(basis.n_zMax, 1);
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+*      sum = arma::zeros(rVals.n_rows, zVals.n_rows);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ib += sumN_zMax(mp);
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            ib++
+*            if(n_z > n_zp){
+*              funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+*              sum += 2 funcB * rho(ia,ib);
+*            }
+*            else if (n_z == n_zp)
+*            {
+*              funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+*              sum +=  funcB * rho(ia,ib);
+*            }
+          }
+        }
+      }
+*    result += funcA % sum;
+    ib = 0;
+    ia++;
+...
+```
+]
+]
+
+---
+#Optimisation de l'algorithme
+
+
+## séparation des rPart et zPart et précalcul de rPart
+
+.row[
+.column.w48.middle[
+```C++
+//=== Version 4 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      sum = arma::zeros(rVals.n_rows, zVals.n_rows);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ib += sumN_zMax(mp);
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            ib++
+            if(n_z > n_zp){
+              funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+              sum += 2 funcB * rho(ia,ib);
+            }
+            else if (n_z == n_zp)
+            {
+              funcB = basisFunc(mp,np,n_zp,zVals,rVals);
+              sum +=  funcB * rho(ia,ib);
+            }
+          }
+        }
+      }
+    result += funcA % sum;
+    ib = 0;
+    ia++;
+...
+```
+]
+.column.middle[
+:arrow_right:
+]
+.column.w48.middle[
+```C++
+//=== Version 5 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+*    rPartA = basis.rPart(rVals, m, n);
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      sum = arma::zeros(rVals.n_rows, zVals.n_rows);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ib += sumN_zMax(mp);
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+*          rPartB = basis.rPart(rVals, mp, np);
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            ib++
+            if(n_z > n_zp){
+*              funcB = rPartB * zPart(zVals, n_zp).t()
+              sum += 2 funcB * rho(ia,ib);
+            }
+            else if (n_z == n_zp)
+            {
+*              funcB = rPartB * zPart(zVals, n_zp).t()
+              sum += funcB * rho(ia,ib);
+            }
+          }
+        }
+      }
+    result += funcA % sum;
+    ib = 0;
+    ia++;
+...
+```
+]
+]
+
+---
+#Sans optimisation
+
+.row[
+.column.w100.middle[
+```C++
+//=== Version 0 ===
+for (int m = 0; m < basis.mMax; m++)
+    {
+        for (int n = 0; n < basis.nMax(m); n++)
+        {
+            for (int n_z = 0; n_z < basis.n_zMax(m, n); n_z++)
+            {
+                for (int mp = 0; mp < basis.mMax; mp++)
+                {
+                    for (int np = 0; np < basis.nMax(mp); np++)
+                    {
+                        for (int n_zp = 0; n_zp < basis.n_zMax(mp, np); n_zp++)
+                        {
+                            arma::mat funcA = basis.basisFunc(m,  n,  n_z, zVals, rVals);
+                            arma::mat funcB = basis.basisFunc(mp, np, n_zp, zVals, rVals);
+                            result += funcA % funcB * rho(ia,ib); // mat += mat % mat * double
+                            ib++;
+                        }
+                    }
+                }
+                ib = 0;
+                ia++;
+            }
+        }
+    }
+...
+```
+]
+
+]
+
+<h3> Pour la version originale, il utilise 3.47883s pour le calcul. </h3>
+  </br>
+<h3>C'est vraiment lent !!! </h3> 
+---
+# Après l'optimisation
+
+.row[
+.column.w100.middle[
+```C++
+//=== Version 5 ===
+for (int m = 0; m < mMax; m++)
+{
+  for (int n = 0; n < nMax(m); n++)
+  {
+*    rPartA = basis.rPart(rVals, m, n);
+    for (int n_z = 0; n_z < n_zMax(m, n); n_z++)
+    {
+      funcA = basisFunc(m,n,n_z,zVals,rVals);
+      sum = arma::zeros(rVals.n_rows, zVals.n_rows);
+      for (int mp = 0; mp < mMax; mp++)
+      {
+        if (m != mp){
+          ib += sumN_zMax(mp);
+          continue;
+        }
+        for (int np = 0; np < nMax(mp); np++)
+        {
+*          rPartB = basis.rPart(rVals, mp, np);
+          for (int n_zp = 0; n_zp < n_zMax(mp,np); n_zp++)
+          {
+            ib++
+            if(n_z > n_zp){
+*              funcB = rPartB * zPart(zVals, n_zp).t()
+              sum += 2 funcB * rho(ia,ib);
+            }
+            else if (n_z == n_zp)
+            {
+*              funcB = rPartB * zPart(zVals, n_zp).t()
+              sum += funcB * rho(ia,ib);
+            }
+          }
+        }
+      }
+    result += funcA % sum;
+...
+```
+]
+]
+
+<h3> 0.107595s après l'optimisation.<span style="color: red"> 32,33 fois plus rapide</span></h3>
+
+
+
+---
+#Densité locale en 2D dans le plan (x,z)
+
+.column.middle.grow[
+.row.middle.grow[
+.column.w100.middle[
+![](images/Density2d.png)
+]]
+]
+
+---
+#Densité locale en 3D dans le plan (x,y,z)
+
+.column.middle.grow[
+.row.middle.grow[
+.column.w100.middle[
+![](images/plot3d.png)
+]]
+]
+
+---
+#Psi avec les paramètres m, n et nz
+
+.column.middle.grow[
+.row.middle.grow[
+.column.w100.middle[
+![](images/Psi.jpeg)
+]]
+]
+
+
+    </textarea>
+
+    <script src="core/javascript/remark.js"></script>
+    <script src="core/javascript/plotly.js" type="text/javascript"></script>
+    <script src="core/javascript/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML&delayStartupUntil=configured" type="text/javascript"></script>
+    <script src="core/javascript/emojify.js" type="text/javascript"></script>
+    <script src="core/javascript/mermaid.js" type="text/javascript"></script>
+    <script src="core/javascript/term.js" type="text/javascript"></script>
+    <script src="core/javascript/jquery-2.1.1.min.js" type="text/javascript"></script>
+    <script src="core/javascript/extend-jquery.js" type="text/javascript"></script>
+    <script src="core/javascript/cinescript.js" type="text/javascript"></script>
+    <script src="core/javascript/gitgraph.js" type="text/javascript"></script>
+    <script>
+
+    // === Remark.js initialization ===
+    var slideshow = remark.create({
+      highlightStyle: 'monokai',
+      countIncrementalSlides: false,
+      highlightLines: false
+    });
+
+    // === Mermaid.js initialization ===
+    mermaid.initialize({
+      startOnLoad: false,
+      cloneCssStyles: false,
+      flowchart:{
+        height: 50
+      },
+      sequenceDiagram:{
+        width: 110,
+        height: 30
+      }
+    });
+
+    function initMermaid(s) {
+      var diagrams = document.querySelectorAll('.mermaid');
+      var i;
+      for(i=0;i<diagrams.length;i++){
+        if(diagrams[i].offsetWidth>0){
+          mermaid.init(undefined, diagrams[i]);
+        }
+      }
+    }
+
+    slideshow.on('afterShowSlide', initMermaid);
+    initMermaid(slideshow.getSlides()[slideshow.getCurrentSlideIndex()]);
+
+    // === MathJax.js initialization ===
+    MathJax.Hub.Config({ tex2jax: { skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] } }); 
+    MathJax.Hub.Queue(function() { $(MathJax.Hub.getAllJax()).map(function(index, elem) { return(elem.SourceElement()); }).parent().addClass('has-jax'); });
+    MathJax.Hub.Configured();
+
+    // === Emojify.js initialization ===
+    emojify.run();
+
+    // === Cinescript initialization ===
+    $(document).ready(init_cinescripts);
+
+    // ===== plotly01 =====
+    var trace2 = {
+                  x:[-20,-19.8,-19.6,-19.4,-19.2,-19,-18.8,-18.6,-18.4,-18.2,-18,-17.8,-17.6,-17.4,-17.2,-17,-16.8,-16.6,-16.4,-16.2,-16,-15.8,-15.6,-15.4,-15.2,-15,-14.8,-14.6,-14.4,-14.2,-14,-13.8,-13.6,-13.4,-13.2,-13,-12.8,-12.6,-12.4,-12.2,-12,-11.8,-11.6,-11.4,-11.2,-11,-10.8,-10.6,-10.4,-10.2,-10,-9.8,-9.6,-9.4,-9.2,-9,-8.8,-8.6,-8.4,-8.2,-8,-7.8,-7.6,-7.4,-7.2,-7,-6.8,-6.6,-6.4,-6.2,-6,-5.8,-5.6,-5.4,-5.2,-5,-4.8,-4.6,-4.4,-4.2,-4,-3.8,-3.6,-3.4,-3.2,-3,-2.8,-2.6,-2.4,-2.2,-2,-1.8,-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,1.11022e-15,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,3.2,3.4,3.6,3.8,4,4.2,4.4,4.6,4.8,5,5.2,5.4,5.6,5.8,6,6.2,6.4,6.6,6.8,7,7.2,7.4,7.6,7.8,8,8.2,8.4,8.6,8.8,9,9.2,9.4,9.6,9.8,10,10.2,10.4,10.6,10.8,11,11.2,11.4,11.6,11.8,12,12.2,12.4,12.6,12.8,13,13.2,13.4,13.6,13.8,14,14.2,14.4,14.6,14.8,15,15.2,15.4,15.6,15.8,16,16.2,16.4,16.6,16.8,17,17.2,17.4,17.6,17.8,18,18.2,18.4,18.6,18.8,19,19.2,19.4,19.6,19.8,20,],
+                  y:[0.00108511,0.00127739,0.00145547,0.00160119,0.00169595,0.0017241,0.00167697,0.00155694,0.00138041,0.00117842,0.000993967,0.0008753,0.000865811,0.000992055,0.00125286,0.00161303,0.00200502,0.0023403,0.00252962,0.0025081,0.00225813,0.00182199,0.00129771,0.000815873,0.0005018,0.000433873,0.000612732,0.000954762,0.00131636,0.00154416,0.0015347,0.00128017,0.000878889,0.000501234,0.000320223,0.000433776,0.000813438,0.001307,0.00170027,0.00181474,0.00159678,0.0011521,0.000701617,0.000473102,0.000579666,0.00095032,0.00135773,0.00153951,0.00135487,0.000888578,0.000432122,0.000333984,0.000789866,0.001693,0.00264938,0.00317878,0.0030088,0.00228982,0.00157333,0.00151403,0.00243009,0.00398714,0.0052699,0.00533765,0.0040885,0.00301844,0.00540154,0.0156097,0.0376775,0.0736231,0.122249,0.179026,0.237228,0.289935,0.33211,0.3619,0.380678,0.39189,0.399334,0.405672,0.411815,0.41729,0.42124,0.423387,0.42443,0.425703,0.428371,0.43268,0.437702,0.441744,0.443163,0.44118,0.436271,0.429983,0.424289,0.420828,0.420321,0.422401,0.425827,0.428981,0.430454,0.429552,0.426576,0.422768,0.419906,0.419624,0.422675,0.428479,0.435205,0.440458,0.44233,0.44033,0.435696,0.430852,0.428213,0.428909,0.432129,0.435465,0.436148,0.432542,0.425061,0.41595,0.407936,0.402404,0.398044,0.390769,0.375074,0.346319,0.302913,0.24741,0.186004,0.126625,0.0764498,0.0398483,0.0175035,0.00690791,0.00383709,0.00407085,0.00466047,0.00436462,0.00330394,0.00220121,0.0016596,0.00179186,0.00226396,0.00259824,0.00249343,0.00197423,0.00132161,0.000866831,0.000790875,0.00104112,0.00139242,0.00159597,0.00152097,0.00121261,0.000846729,0.000618998,0.000635927,0.000864726,0.00116121,0.00135272,0.00132826,0.0010904,0.00074748,0.000455909,0.000344439,0.000457046,0.000738151,0.00106245,0.00129205,0.00133423,0.00117616,0.000885359,0.00057949,0.000380403,0.000371034,0.000570061,0.000930655,0.00136039,0.00175283,0.00201914,0.00211017,0.00202415,0.00180037,0.0015032,0.00120274,0.000957622,0.00080407,0.000752354,0.000789876,0.000888548,0.00101373,0.00113238,0.00121885,0.00125779,0.00124438,0.00118252,0.00108209,0.000955903,0.000817102,],
+                  type: 'scatter',
+                  smooth: 'best'
+                 };
+    Plotly.newPlot('plotly01', [trace2], {
+                                          title: '',
+                                          autosize: false,
+                                          width: 400,
+                                          height: 220,
+                                          margin: {l: 50, r: 50, b: 50, t: 50, p: 10},
+                                          xaxis: {title: 'Z-axis [fm]'},
+                                          yaxis: {title: 'Neut. loc. dens. [fm^-3]'},
+                                         });
+    // ===== END =====
+  
+
+    </script>
+  </body>
+</html>
+

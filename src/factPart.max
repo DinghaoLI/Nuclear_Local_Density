@@ -1,0 +1,12 @@
+/* maxima --very-quiet < factPart.max */
+
+/* ===== 2^(nz)*nz! ===== */
+
+fpprec: 40$
+linel: 100$
+
+for i:0 thru 20 do
+(
+    print(bfloat(1/sqrt(i!*2^i*sqrt(%pi))))
+)$
+    

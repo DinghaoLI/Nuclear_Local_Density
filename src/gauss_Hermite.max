@@ -1,0 +1,15 @@
+/* ===== Gauss - Hermite ===== */
+fpprec: 40$
+linel: 100$
+gauss_hermite_coeff(n) := block([p, q, v, w],
+                                    p: expand(hermite(n, x)),
+                                    q: 2^(n+1)*n!*sqrt(%pi)/(hermite(n+1, x)^2),
+                                    v: map(rhs, bfallroots(p)),
+                                    w: map(lambda([z], subst([x = z],q)), v),
+                                    [map(bfloat, v), map(bfloat, w)])$
+                          a:
+                              gauss_hermite_coeff(20)$
+                              for i:1 thru length(a[1]) do
+                                      (
+                                          print(a[2][i])
+                                      )$
